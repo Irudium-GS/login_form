@@ -1,36 +1,35 @@
 <?php 
 
-$host="localhost";
-$user="root";
-$password="";
-$db="user";
-
+@include 'config.php';
 session_start();
 
-$data=mysqli_connect($host,$user,$password,$db);
-if($data===false)
+
+if(isset($_POST['submit']))
 {
-    die("connection error");
+    $name = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = $_POST['password'];
+    $user_type = $_POST['user_type'];
+    $select = " SELECT * FROM user_form WHERE id = '$name' && password = '$password' ";
 }
 if($_SERVER["REQUEST_METHOD"]=="POST")
 {
-    $username=$_POST["username"];
+    $name=$_POST["username"];
     $password=$_POST["password"];
 
-    $sql="select * from login where username='".$username."' AND password='".$password."' ";
+    $sql="SELECT * FROM user_form where username='".$name."' && password='".$password."' ";
 
     $result=mysqli_query($data,$sql);
 
     $row=mysqli_fetch_array($result);
 
-    if($row["usertype"]=="user")
+    if($row["user_type"]=="user")
     {
-        $_SESSION["username"]=$username;
+        $_SESSION["username"]=$name;
         header("location:userhome.php");
     }
-    else if($row["usertype"]=="admin")
+    else if($row["user_type"]=="admin")
     {   
-        $_SESSION["username"]=$username;
+        $_SESSION["username"]=$name;
         header("location:adminhome.php");
     }
     else{
